@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "ADO Pull Request Sprint Label",
+  "version": "1.0",
+  "description": "For completed pull requests displays sprint in which pull request was completed.",
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": [
+        "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest*"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}
