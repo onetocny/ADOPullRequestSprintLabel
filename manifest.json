@@ -7,9 +7,15 @@
     {
       "js": ["scripts/content.js"],
       "matches": [
-        "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest*"
+        "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/*"
       ],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
-  ]
+  ],
+  "icons": {
+    "16": "images/icon_16.png",
+    "32": "images/icon_32.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+  }
 }

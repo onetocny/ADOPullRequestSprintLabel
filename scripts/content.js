@@ -1,14 +1,28 @@
-function getSprint(date)
+const completedPRSelector = "div.pr-status-completed";
+const sprintLabelCls = "sprint-label"
+const sprintLabelSpanSelector = "span." + sprintLabelCls;
+
+const mo = new MutationObserver(onMutation);
+
+observe();
+
+function observe()
 {
-    const xmlHttp = new XMLHttpRequest();
-    const url = "https://whatsprintis.it/on/" + date.getFullYear() + "/" + (date.getMonth() + 1) +  "/" + date.getDate();
-    console.log("Calling " + url);
-    xmlHttp.open("GET", url, false); // false for synchronous request
-    xmlHttp.send(null);
-    const response = xmlHttp.responseText;
-    console.log("What Sprint It Is returned: " + response);
-    const parsed = JSON.parse(response);
-    return parsed.sprint;
+    const options = {
+        subtree: true,
+        childList: true,
+    };
+    mo.observe(document, options);
+}
+
+function onMutation()
+{
+    if (document.querySelector(completedPRSelector) && !document.querySelector(sprintLabelSpanSelector))
+    {
+        mo.disconnect();
+        run();
+        observe();
+    }
 }
 
 function log(message)
@@ -16,15 +30,21 @@ function log(message)
     console.log("[PRSprintLabelExt] " + message);
 }
 
+function getSprint(date)
+{
+    const xmlHttp = new XMLHttpRequest();
+    const url = "https://whatsprintis.it/on/" + date.getFullYear() + "/" + (date.getMonth() + 1) +  "/" + date.getDate();
+    log("Calling " + url);
+    xmlHttp.open("GET", url, false); // false for synchronous request
+    xmlHttp.send(null);
+    const response = xmlHttp.responseText;
+    log("What Sprint It Is returned: " + response);
+    const parsed = JSON.parse(response);
+    return parsed.sprint;
+}
+
 function run()
 {
-    const completed = document.querySelector("div.pr-status-completed");
-    if (!completed)
-    {
-        log("PR was not completed yet.");
-        return;
-    }
-    
     const dateTimeMergedElement = document.querySelector("div.bolt-table-card time");
     if (!dateTimeMergedElement)
     {
@@ -55,10 +75,11 @@ function run()
         return;
     }
     
-    log("Setting sprint label.");
-    document.querySelector("div.bolt-table-card time").innerText += ", M" + sprint;
-}
+    log("Adding sprint label.");
 
-//setTimeout(run, 1000); //wait for page to load
-run();
-//document.addEventListener("DOMContentLoaded", run);
+    const span = document.createElement("span");
+    span.setAttribute("class", "secondary-text white-space-nowrap " + sprintLabelCls);
+    const text = document.createTextNode(", M" + sprint);
+    span.appendChild(text);
+    dateTimeMergedElement.parentElement.parentElement.appendChild(span);
+}
