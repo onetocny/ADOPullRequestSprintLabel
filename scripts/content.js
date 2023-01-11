@@ -1,28 +1,42 @@
 const completedPRSelector = "div.pr-status-completed";
 const sprintLabelCls = "sprint-label"
 const sprintLabelSpanSelector = "span." + sprintLabelCls;
+const pullRequestPageUrl = "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest";
+const sprintCache = {};
 
-const mo = new MutationObserver(onMutation);
+const observerOptions = {
+    subtree: true,
+    childList: true,
+};
+const mo = new MutationObserver(onDocumentMutation);
 
 observe();
 
 function observe()
 {
-    const options = {
-        subtree: true,
-        childList: true,
-    };
-    mo.observe(document, options);
+    mo.observe(document, observerOptions);
 }
 
-function onMutation()
+function onDocumentMutation()
 {
-    if (document.querySelector(completedPRSelector) && !document.querySelector(sprintLabelSpanSelector))
+    if (!window.location.href.startsWith(pullRequestPageUrl))
     {
-        mo.disconnect();
-        run();
-        observe();
+        return; //we are not at PR page
     }
+
+    if (!document.querySelector(completedPRSelector))
+    {
+        return; //PR is not completed yet
+    }
+
+    if (document.querySelector(sprintLabelSpanSelector))
+    {
+        return; //sprint label has been added already
+    }
+    
+    mo.disconnect();
+    addSprintLabel();
+    observe();
 }
 
 function log(message)
@@ -31,9 +45,20 @@ function log(message)
 }
 
 function getSprint(date)
+{    
+    const key = date.getFullYear() + "/" + (date.getMonth() + 1) +  "/" + date.getDate();    
+
+    if (!sprintCache[key])
+    {
+        sprintCache[key] = downloadSprint("https://whatsprintis.it/on/" + key);
+    }
+
+    return sprintCache[key];
+}
+
+function downloadSprint(url)
 {
     const xmlHttp = new XMLHttpRequest();
-    const url = "https://whatsprintis.it/on/" + date.getFullYear() + "/" + (date.getMonth() + 1) +  "/" + date.getDate();
     log("Calling " + url);
     xmlHttp.open("GET", url, false); // false for synchronous request
     xmlHttp.send(null);
@@ -43,7 +68,7 @@ function getSprint(date)
     return parsed.sprint;
 }
 
-function run()
+function addSprintLabel()
 {
     const dateTimeMergedElement = document.querySelector("div.bolt-table-card time");
     if (!dateTimeMergedElement)
