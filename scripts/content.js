@@ -104,7 +104,7 @@ function addSprintLabel()
 
     const span = document.createElement("span");
     span.setAttribute("class", "secondary-text white-space-nowrap " + sprintLabelCls);
-    const text = document.createTextNode(", M" + sprint);
+    const text = document.createTextNode(", sprint " + sprint);
     span.appendChild(text);
     dateTimeMergedElement.parentElement.parentElement.appendChild(span);
 }

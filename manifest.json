@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ADO Pull Request Sprint Label",
-  "version": "1.0",
+  "version": "1.1",
   "description": "For completed pull requests displays sprint in which pull request was completed.",
   "content_scripts": [
     {
