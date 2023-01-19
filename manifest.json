@@ -7,7 +7,7 @@
     {
       "js": ["scripts/content.js"],
       "matches": [
-        "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/*"
+        "https://dev.azure.com/mseng/*"
       ],
       "run_at": "document_idle"
     }
