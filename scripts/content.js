@@ -1,9 +1,9 @@
 const completedPRSelector = "div.pr-status-completed";
-const sprintLabelCls = "sprint-label"
-const sprintLabelSpanSelector = "span." + sprintLabelCls;
-const pullRequestPageUrl = "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest";
+const sprintLabelCls = "sprint-label";
+const labelElementName = "span";
+const sprintLabelSpanSelector = labelElementName + "." + sprintLabelCls;
+const pullRequestPageUrl = "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest/";
 const sprintCache = {};
-
 const observerOptions = {
     subtree: true,
     childList: true,
@@ -21,7 +21,7 @@ function onDocumentMutation()
 {
     if (!window.location.href.startsWith(pullRequestPageUrl))
     {
-        return; //we are not at PR page
+        return; //we are not at PR detail page
     }
 
     if (!document.querySelector(completedPRSelector))
@@ -102,9 +102,9 @@ function addSprintLabel()
     
     log("Adding sprint label.");
 
-    const span = document.createElement("span");
-    span.setAttribute("class", "secondary-text white-space-nowrap " + sprintLabelCls);
+    const labelElement = document.createElement(labelElementName);
+    labelElement.setAttribute("class", "secondary-text white-space-nowrap " + sprintLabelCls);
     const text = document.createTextNode(", sprint " + sprint);
-    span.appendChild(text);
-    dateTimeMergedElement.parentElement.parentElement.appendChild(span);
+    labelElement.appendChild(text);
+    dateTimeMergedElement.parentElement.parentElement.appendChild(labelElement);
 }
