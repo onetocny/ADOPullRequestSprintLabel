@@ -2,7 +2,7 @@ const completedPRSelector = "div.pr-status-completed";
 const sprintLabelCls = "sprint-label";
 const labelElementName = "span";
 const sprintLabelSpanSelector = labelElementName + "." + sprintLabelCls;
-const pullRequestPageUrl = "https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps/pullrequest/";
+const prPageRegex = /^https:\/\/dev\.azure\.com\/mseng\/AzureDevOps\/_git\/(?:AzureDevOps|[a-f0-9-]+)\/pullrequest\/\d+$/i;
 const sprintCache = {};
 const observerOptions = {
     subtree: true,
@@ -18,8 +18,8 @@ function observe()
 }
 
 function onDocumentMutation()
-{
-    if (!window.location.href.startsWith(pullRequestPageUrl))
+{    
+    if (!prPageRegex.test(window.location.href))
     {
         return; //we are not at PR detail page
     }
